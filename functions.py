@@ -3,6 +3,18 @@ from passlib.hash import pbkdf2_sha256
 from sqlalchemy import text
 import pandas as pd
 import string
+import tensorflow as tf
+import tensorflow_hub as hub
+from sklearn.neighbors import NearestNeighbors
+import pickle
+
+@st.cache_resource()
+def init_resource():
+    model_url = 'https://www.kaggle.com/models/google/universal-sentence-encoder/frameworks/TensorFlow2/variations/multilingual/versions/2'
+    model = hub.load(model_url)
+    with open('objet_nn.pkl', 'rb') as nn_file:
+        nn = pickle.load(nn_file)
+    return nn,model
 
 def connect_db():
     try:
@@ -133,3 +145,8 @@ def update_movies(df_user):
         st.error(f"Error: {e}")
         return None     
 
+def nlp_reco(model,nn,prompt):
+    prompt_embed = model([prompt])
+    reco_idx = nn.kneighbors(prompt_embed, return_distance=False)[0]
+    reco = st.session_state.df_movies.iloc[reco_idx].sort_index()
+    return reco

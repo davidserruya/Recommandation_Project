@@ -3,13 +3,6 @@ import pandas as pd
 from itertools import cycle
 from functions import connect_db, get_my_movies,get_movieId,add_movie,remove_special_characters,add_rating,update_movies
 
-# Dataset initialisation
-if 'df_user' not in st.session_state and 'df_movies' not in st.session_state:
-    st.session_state.df_movies = pd.read_csv('csv/movies.csv')
-    st.session_state.df_user = get_my_movies(st.session_state['UserId'])
-    
-    
-
 # Settings page
 col1, col2, col3 = st.columns(3)
 with col2:

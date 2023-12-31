@@ -1,6 +1,7 @@
 import streamlit as st
-from functions import check_credentials, add_user, deconnexion
+from functions import check_credentials, add_user, deconnexion,get_my_movies,init_resource
 from streamlit_option_menu import option_menu
+import pandas as pd
 
 st.set_page_config(
         page_title="netflix",
@@ -45,6 +46,11 @@ else:
     if st.button('Se déconnecter'):
         deconnexion()
     
+    if 'df_user' not in st.session_state and 'df_movies' not in st.session_state:
+       st.session_state.df_movies = pd.read_csv('csv/movies.csv')
+       st.session_state.df_user = get_my_movies(st.session_state['UserId'])
+    nn,model = init_resource()
+    
     st.markdown('<h1 style="text-align: center;">NETFLIX</h1><br>', unsafe_allow_html=True)
     menu = option_menu(None, ["Accueil", "Mes films", "Recommandations"], 
              icons=['house', "film", "search"],  orientation="horizontal",
@@ -55,15 +61,19 @@ else:
          })
 
     if menu=="Accueil":
+           if "messages" in st.session_state:
+                 st.session_state.pop("messages")
            with open("", "r", encoding="utf-8") as file:
              exec(file.read())
 
     elif menu=="Mes films":
+           if "messages" in st.session_state:
+                 st.session_state.pop("messages")
            with open("mymovies.py", "r", encoding="utf-8") as file:
              exec(file.read())
 
     elif menu=="Recommandations":
-           with open("", "r", encoding="utf-8") as file:
+           with open("recommandations.py", "r", encoding="utf-8") as file:
              exec(file.read())
 
     
