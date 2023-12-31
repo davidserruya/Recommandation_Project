@@ -49,8 +49,9 @@ else:
     if 'df_user' not in st.session_state and 'df_movies' not in st.session_state:
        st.session_state.df_movies = pd.read_csv('csv/movies.csv')
        st.session_state.df_user = get_my_movies(st.session_state['UserId'])
-    nn,model = init_resource()
     
+    nn = init_resource()
+
     st.markdown('<h1 style="text-align: center;">NETFLIX</h1><br>', unsafe_allow_html=True)
     menu = option_menu(None, ["Accueil", "Mes films", "Recommandations"], 
              icons=['house', "film", "search"],  orientation="horizontal",

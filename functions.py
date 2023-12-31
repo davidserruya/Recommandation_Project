@@ -5,6 +5,7 @@ import pandas as pd
 import string
 import tensorflow as tf
 import tensorflow_hub as hub
+import tensorflow_text
 from sklearn.neighbors import NearestNeighbors
 import pickle
 
