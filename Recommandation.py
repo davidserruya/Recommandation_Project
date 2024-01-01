@@ -9,6 +9,8 @@ import tensorflow_text
 
 from sklearn.neighbors import NearestNeighbors
 
+from Databases import *
+
 import pickle
 
 
@@ -82,6 +84,24 @@ def recommend_movies(df_pred, user_id: int, df, df_matrix, n_recommendations: in
 
     return recommandations
 
+
+def generate_reco(df, user_id: int, n_recommandations: int):
+    '''
+    This function automates the collaborative filtering recommandations
+    '''
+    matrix, df_matrix, _, map_movie = create_matrix(df)
+
+    df_pred = svd(matrix, 50).iloc[user_id].sort_values(ascending=False)
+
+    user_data = df_matrix.iloc[user_id]
+
+    seen_movies = list(user_data[user_data != 0.0].index)
+    
+    reco_movies = df_pred[~df_pred.index.isin(seen_movies)][:n_recommendations].index
+
+    recommandations = df[['movieId', 'title']].drop_duplicates(subset=['movieId']).set_index('movieId').iloc[reco_movies]
+    
+    return recommandations
 
 
 def train_model(model_url: str, df, n_recommendations: int):
