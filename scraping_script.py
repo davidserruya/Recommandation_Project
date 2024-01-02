@@ -46,7 +46,8 @@ def merging(url, movies) :
     for val in movies.unique() :
         try :
             movie = val.replace(" ", "%20")
-            complete_url = url+movie
+            partial_url = url+movie
+            complete_url = partial_url +'&ref_=nv_sr_sm'
             html_text = retrieve_movies_results(complete_url)
             results_df = process_results(html_text)
             synops.append(results_df['Synopsis'][0])   
@@ -93,7 +94,7 @@ def iter(freq = 100) :
         end_idx = j+freq - 1
         sub_movies = all_movies.iloc[start_idx:end_idx]
         # Lancement du scraping et stockage dans un csv 
-        synopsis_base = merging(url = 'https://www.imdb.com/search/title/?title=', movies = sub_movies["title"])
+        synopsis_base = merging(url = 'https://www.imdb.com/find/?q=', movies = sub_movies["title"])
         old_df = pd.read_csv("descriptions.csv")
         new_df = pd.concat([old_df,synopsis_base],ignore_index=True)
         new_df.to_csv("descriptions.csv")
