@@ -6,7 +6,7 @@ import pandas as pd
 st.set_page_config(
         page_title="netflix",
         page_icon="🎞️",
-        layout="wide"
+        layout="wide",
     )
 st.markdown(""" <style> .block-container {padding-top: 2.5rem; padding-bottom: 0rem;} </style> """, unsafe_allow_html=True)
 
@@ -47,8 +47,9 @@ else:
         deconnexion()
     
     if 'df_user' not in st.session_state and 'df_movies' not in st.session_state:
-       st.session_state.df_movies = pd.read_csv('csv/movies.csv')
+       st.session_state.df_movies = pd.read_csv('csv/movies_final.csv')
        st.session_state.df_user = get_my_movies(st.session_state['UserId'])
+       st.session_state.df_ratings = pd.read_csv('csv/ratings.csv')
     
     nn,model = init_resource()
 
@@ -64,7 +65,7 @@ else:
     if menu=="Accueil":
            if "messages" in st.session_state:
                  st.session_state.pop("messages")
-           with open("", "r", encoding="utf-8") as file:
+           with open("accueil.py", "r", encoding="utf-8") as file:
              exec(file.read())
 
     elif menu=="Mes films":
@@ -76,6 +77,9 @@ else:
     elif menu=="Recommandations":
            with open("recommandations.py", "r", encoding="utf-8") as file:
              exec(file.read())
+
+    
+
 
     
 
