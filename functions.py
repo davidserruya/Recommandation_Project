@@ -8,12 +8,20 @@ import tensorflow_hub as hub
 import tensorflow_text
 from sklearn.neighbors import NearestNeighbors
 import pickle
+from collections import Counter
+import random
+import spacy
+nlp = spacy.load("fr_core_news_sm")
+import numpy as np
+
+
+############################################ INSCRIPTION/CONNEXION/INITIALISATION #####################################
 
 @st.cache_resource()
 def init_resource():
     model_url = 'https://www.kaggle.com/models/google/universal-sentence-encoder/frameworks/TensorFlow2/variations/multilingual/versions/2'
     model = hub.load(model_url)
-    with open('objet_nn.pkl', 'rb') as nn_file:
+    with open('csv/objet_nn.pkl', 'rb') as nn_file:
         nn = pickle.load(nn_file)
     return nn,model
 
@@ -24,6 +32,9 @@ def connect_db():
     except Exception as e:
         st.error(f"Error connecting to the database: {e}")
         return None
+
+def capitalize_first_letter(s):
+    return s.capitalize()
 
 # Fonction pour vérifier les informations de connexion
 def check_credentials(username, password):
@@ -80,6 +91,8 @@ def deconnexion():
         del st.session_state[key]
     st.session_state["authentication_status"]=False
     st.experimental_rerun()
+
+############################################ MY MOVIES #####################################
 
 def get_my_movies(userId):
     conn = connect_db()
@@ -144,10 +157,99 @@ def update_movies(df_user):
         st.success("Films Sauvegardés!")
     except Exception as e:
         st.error(f"Error: {e}")
-        return None     
+        return None   
+
+############################################ RECOMMANDATIONS #####################################  
 
 def nlp_reco(model,nn,prompt):
     prompt_embed = model([prompt])
     reco_idx = nn.kneighbors(prompt_embed, return_distance=False)[0]
     reco = st.session_state.df_movies.iloc[reco_idx].sort_index()
     return reco
+
+############################################ PAGE ACCUEIL #####################################
+
+def best_movies(df):
+    df_best=df[df['RatingMean']>=4.1]
+    return df_best.sample(n=8)
+    
+
+def more_genres(df,df_movies):
+    df=pd.merge(df, df_movies, on='MovieId', how='left')
+    genres=get_all_genres(df)
+    best_genre=count_word_max(genres)
+    df_best_genre = df_movies[(df_movies['RatingMean'] >= 3.5) & (df_movies['Genres'].str.contains(best_genre))]
+    return best_genre,df_best_genre.sample(n=8)
+
+def count_word_max(list):
+    occurrences = Counter(list)
+    max_occurrences = max(occurrences.values())
+    mots_max_occurrences = [mot for mot, occurrences_mot in occurrences.items() if occurrences_mot == max_occurrences]
+    return random.choice(mots_max_occurrences)
+
+def get_all_genres(df):
+    genres=[]
+    final_genres=[]
+    for genre in df['Genres']:
+        genres.append(genre)
+    cleaned_genres = [genre.replace("'", '').replace('[','').replace(']','').split('|') for genre in genres]
+    for liste in cleaned_genres:
+        for genre in liste:
+            final_genres.append(genre)
+    return final_genres
+
+def tdidf_recom():
+    metrique=loaded_cosine()
+    MovieId_select=love_movie(st.session_state.df_user)
+    movie_name = st.session_state.df_movies.loc[st.session_state.df_movies['MovieId'] == MovieId_select, 'Title'].values
+    idx = st.session_state.df_movies.index[st.session_state.df_movies['MovieId'] == MovieId_select].tolist()[0]
+    sim_scores = list(enumerate(metrique[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sim_scores[1:9]
+    film_indices = [i[0] for i in sim_scores]
+    return st.session_state.df_movies.iloc[film_indices],movie_name[0]
+    
+def love_movie(df):
+    df_love = df[df['Rating'] >= 4]
+    if len(df_love) == 0:
+        df_love = df[df['Rating'] == max(df['Rating'])]
+    movie_id = df_love.sample(n=1)['MovieId'].iloc[0]
+    return movie_id
+
+@st.cache_resource()
+def loaded_cosine():
+    with open('csv/cosine_similarity_matrix.pkl', 'rb') as file:
+       loaded_cosine = pickle.load(file) 
+    return loaded_cosine   
+
+
+def supprimer_mot_film(phrase): 
+    nlp = spacy.load("fr_core_news_sm")
+    doc = nlp(phrase)
+    phrase_sans_film = " ".join([token.text for token in doc if token.text.lower() != "film"])
+    return phrase_sans_film
+
+def extraire_mot_cle(phrase):
+    doc = nlp(supprimer_mot_film(phrase))
+    mot_cle = None
+    for token in doc:
+        if token.pos_ in ("NOUN", "ADJ"):
+            mot_cle = token.text
+            break
+    return mot_cle
+
+
+def get_df_ratings():
+    conn = connect_db()
+    if conn is None:
+        return False
+    try:
+        result = conn.query("""SELECT * FROM "Ratings";""",ttl=0)
+        result_df = pd.concat([st.session_state.df_ratings, result], ignore_index=True)
+        return result_df
+    except Exception as e:
+        st.error(f"Error: {e}")
+        return st.session_state.df_ratings
+
+
+
