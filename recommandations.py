@@ -6,7 +6,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 with st.chat_message('assistant'):
-        st.write("Hey 👋! Que voulez-vous voir aujourd\'hui ?")
+        st.markdown(f"Hey {st.session_state['Username']} 👋! Que voulez-vous voir aujourd'hui ?")
 
 
 utilisateur_message = st.text_input("Votre message:")
@@ -14,6 +14,7 @@ if st.button("GO"):
     reco = nlp_reco(model,nn, utilisateur_message)
     st.session_state.messages.append({"role": "assistant", "content": reco})
     st.session_state.messages.append({"role": "user", "content": utilisateur_message})
+    st.session_state.demande_user=utilisateur_message
 
 
 

@@ -10,9 +10,15 @@ from sklearn.neighbors import NearestNeighbors
 import pickle
 from collections import Counter
 import random
-import spacy
-nlp = spacy.load("fr_core_news_sm")
+from scipy.sparse import csr_matrix
+from scipy.sparse.linalg import svds
 import numpy as np
+import spacy
+import fr_core_news_md
+nlp = fr_core_news_md.load()
+from spacy.lang.en.stop_words import STOP_WORDS
+from scipy.sparse import csr_matrix
+from scipy.sparse.linalg import svds
 
 
 ############################################ INSCRIPTION/CONNEXION/INITIALISATION #####################################
@@ -76,6 +82,7 @@ def add_user(username, password):
                     session.execute(text("""INSERT INTO "Users" ("Username", "Password") VALUES (:username, :password);"""),{"username": username, "password": pbkdf2_sha256.hash(password)})
                     session.commit()
                     session.reset()
+                    st.balloons()
                     return True
                 except Exception as e:
                     st.error(f"Error adding user: {e}")
@@ -220,24 +227,7 @@ def love_movie(df):
 def loaded_cosine():
     with open('csv/cosine_similarity_matrix.pkl', 'rb') as file:
        loaded_cosine = pickle.load(file) 
-    return loaded_cosine   
-
-
-def supprimer_mot_film(phrase): 
-    nlp = spacy.load("fr_core_news_sm")
-    doc = nlp(phrase)
-    phrase_sans_film = " ".join([token.text for token in doc if token.text.lower() != "film"])
-    return phrase_sans_film
-
-def extraire_mot_cle(phrase):
-    doc = nlp(supprimer_mot_film(phrase))
-    mot_cle = None
-    for token in doc:
-        if token.pos_ in ("NOUN", "ADJ"):
-            mot_cle = token.text
-            break
-    return mot_cle
-
+    return loaded_cosine 
 
 def get_df_ratings():
     conn = connect_db()
@@ -251,5 +241,117 @@ def get_df_ratings():
         st.error(f"Error: {e}")
         return st.session_state.df_ratings
 
+def create_matrix(df):
+    
+    """
+    This function creates a sparse user-movie matrix from a dataframe
+ 
+    Args:
+    - a Dataframe that contains at least the columns movieId, userId, and rating (db_preprocessing)
+ 
+    Returns:
+    - matrix : a sparse user-movie matrix of size NxM with N the number of unique users and M the number of unique movies
+    - map_user : a dictionary that maps user_ids to their respective indices
+    - map_user_inv : a dictionary that maps indices to the user_id
+    - map_movie : a dictionary that maps movie_ids to their respective indices
+    - map_movie_inv : a dictionary that maps indices to the movie_id
+ 
+    Inspired by the following repo : https://github.com/topspinj/tmls-2020-recommender-workshop
+    """
+ 
+    N = df['UserId'].nunique()
+    M = df['MovieId'].nunique()
+ 
+    map_user = dict(zip(np.unique(df['UserId']), list(range(df['UserId'].nunique()))))
+    map_movie = dict(zip(np.unique(df['MovieId']), list(range(df['MovieId'].nunique()))))
+ 
+    user_idx = [map_user[i] for i in df['UserId']]
+    movie_idx = [map_movie[i] for i in df['MovieId']]
+ 
+    matrix = csr_matrix((df["Rating"], (user_idx, movie_idx)), shape=(N,M))
+ 
+    df_matrix = df.pivot(index='UserId', columns='MovieId', values='Rating').fillna(0)
+ 
+    return matrix, df_matrix, map_user, map_movie
+
+def svd(matrix,map_user, map_movie, n_factors: int):
+    """
+    This function returns a dataframe with the predicted ratings for all users within the dataframe
+ 
+    Args:
+    - matrix : the sparse user-movie matrix created using the create_matrix function
+    - n_factors : the number of factors / rank of the latent matrix for factorization
+ 
+    Returns:
+    - predictions : a DataFrame containing the predicted ratings for all users in the original dataset
+ 
+    Inspired by the following Git repo : https://github.com/vivdalal/movie-recommender-system
+        
+    """
+    # The following code creates :
+    # U : user matrix of dimension (n_users, n_factors)
+    # sigma : the diagonal matrix of singular values
+    # V_t : the transposed movie matrix of dimension (n_factors, n_movies)
+    
+    U, sigma, V_t = svds(matrix, k = n_factors)
+ 
+    sigma = np.diag(sigma)
+ 
+    pred_ratings = np.dot((U @ sigma), V_t)
+ 
+    predictions = pd.DataFrame(pred_ratings)
+ 
+    predictions.rename(columns=dict(zip(predictions.columns, list(map_movie.keys()))), inplace=True)
+    predictions.index = list(map_user.keys())
+    
+    return predictions
+
+def collab_reco(user_id: int, n_recommandations: int):
+    '''
+    This function automates the collaborative filtering recommandations
+    '''
+    df= get_df_ratings()
+ 
+    matrix, df_matrix, map_user, map_movie = create_matrix(df)
+ 
+    df_pred=svd(matrix, map_user, map_movie, 50).loc[user_id].sort_values(ascending=False)
+ 
+    user_data = df_matrix.loc[user_id]
+ 
+    seen_movies = list(user_data[user_data != 0.0].index)
+    
+    reco_movies = df_pred[~df_pred.index.isin(seen_movies)][:n_recommandations].index
+ 
+    recommandations = list(df[['MovieId']].drop_duplicates(subset=['MovieId']).set_index('MovieId').iloc[reco_movies].index)
+
+    df_recommandation = st.session_state.df_movies[st.session_state.df_movies['MovieId'].isin(recommandations)]
+    
+    return df_recommandation
 
 
+def supprimer_mot_film(phrase, nlp):
+    doc = nlp(phrase)
+    phrase_sans_film = " ".join([token.text for token in doc if token.text.lower() != "film"])
+    return phrase_sans_film
+ 
+def nettoyer_phrase(phrase, nlp):
+    doc = nlp(phrase)
+    mots_nettoyes = [token.lemma_ for token in doc if token.text.lower() not in STOP_WORDS and token.is_punct == False]
+    return " ".join(mots_nettoyes)
+ 
+def extraire_mots_cles(phrase, nlp, nombre_mots_cles=1, pos=["NOUN", "ADJ"]):
+    phrase_modifiee = nettoyer_phrase(supprimer_mot_film(phrase, nlp), nlp)
+    doc = nlp(phrase_modifiee)
+    mots_cles = []
+    for token in doc:
+        if token.pos_ in pos and token.text not in mots_cles:
+            mots_cles.append(token.text)
+            if len(mots_cles) == nombre_mots_cles:
+                break
+    return mots_cles[0]
+
+@st.cache_resource()
+def init_nlp_reco():
+    with open('csv/objet_nn_2.pkl', 'rb') as nn_file:
+        nn = pickle.load(nn_file)
+    return nn
