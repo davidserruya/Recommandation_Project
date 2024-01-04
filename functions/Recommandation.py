@@ -41,7 +41,7 @@ def svd(matrix, map_user: dict, map_movie: dict, n_factors: int):
 
         predictions = pd.DataFrame(pred_ratings)
 
-        predictions.rename(columns=dict(zip(predictions.columns, list(map_movie.keys()))))
+        predictions.rename(columns=dict(zip(predictions.columns, list(map_movie.keys()))), inplace=True)
         predictions.index = list(map_user.keys())
     
     except ValueError:
