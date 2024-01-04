@@ -77,7 +77,7 @@ def generate_reco(df, user_id: int, n_recommandations: int, n_factors:50):
     
     reco_movies = df_pred[~df_pred.index.isin(seen_movies)][:n_recommandations].index
 
-    recommandations = list(df[['movieId']].drop_duplicates(subset=['movieId']).set_index('movieId').iloc[reco_movies].index)
+    recommandations = list(df[['movieId']].drop_duplicates(subset=['movieId']).set_index('movieId').loc[reco_movies].index)
     
     return recommandations
 
