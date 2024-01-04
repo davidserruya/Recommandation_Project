@@ -37,17 +37,17 @@ def create_matrix(df):
     Inspired by the following repo : https://github.com/topspinj/tmls-2020-recommender-workshop
     """
 
-    N = df['userId'].nunique()
-    M = df['movieId'].nunique()
+    N = df['UserId'].nunique()
+    M = df['MovieId'].nunique()
 
-    map_user = dict(zip(np.unique(df['userId']), list(range(df['userId'].nunique()))))
-    map_movie = dict(zip(np.unique(df['movieId']), list(range(df['movieId'].nunique()))))
+    map_user = dict(zip(np.unique(df['UserId']), list(range(df['UserId'].nunique()))))
+    map_movie = dict(zip(np.unique(df['MovieId']), list(range(df['MovieId'].nunique()))))
 
-    user_idx = [map_user[i] for i in df['userId']]
-    movie_idx = [map_movie[i] for i in df['movieId']]
+    user_idx = [map_user[i] for i in df['UserId']]
+    movie_idx = [map_movie[i] for i in df['MovieId']]
 
-    matrix = csr_matrix((df["rating"], (user_idx, movie_idx)), shape=(N,M))
+    matrix = csr_matrix((df["Rating"], (user_idx, movie_idx)), shape=(N,M))
 
-    df_matrix = df.pivot(index='userId', columns='movieId', values='rating').fillna(0)
+    df_matrix = df.pivot(index='UserId', columns='MovieId', values='Rating').fillna(0)
 
     return matrix, df_matrix, map_user, map_movie

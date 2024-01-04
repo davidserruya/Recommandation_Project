@@ -2,10 +2,14 @@ import pandas as pd
 import numpy as np
 from scipy.sparse.linalg import svds
 
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
 from functions.Databases import load_data, create_matrix
 
 import spacy
-# import xx_ent_wiki_sm
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 import pickle
@@ -77,7 +81,7 @@ def generate_reco(df, user_id: int, n_recommandations: int, n_factors:50):
     
     reco_movies = df_pred[~df_pred.index.isin(seen_movies)][:n_recommandations].index
 
-    recommandations = list(df[['movieId']].drop_duplicates(subset=['movieId']).set_index('movieId').loc[reco_movies].index)
+    recommandations = list(df[['MovieId']].drop_duplicates(subset=['MovieId']).set_index('MovieId').loc[reco_movies].index)
     
     return recommandations
 
@@ -109,6 +113,14 @@ def train_model(df, n_recommendations: int):
     
     return pickle.dump(nn, open(nlp_name, 'wb')), pickle.dump(vectorizer, open(vec_name, 'wb'))
 
+def preprocess_text(text):
+
+    stop_words = set(stopwords.words('english'))
+    words = word_tokenize(text)
+    filtered_words = [word.lower() for word in words if word.isalnum() and word.lower() not in stop_words]
+    
+    return ' '.join(filtered_words)
+
 
 def nlp_reco(prompt: str, nlp_model_name: str, vector_name: str, df):
     '''
@@ -130,10 +142,11 @@ def nlp_reco(prompt: str, nlp_model_name: str, vector_name: str, df):
     vectorizer = pickle.load(open(vector_name, 'rb'))
 
     prompt_doc = model(prompt)
-    prompt_tfidf = vectorizer.transform([prompt])
+    prompt_text = preprocess_text(prompt_doc.text)
+    prompt_tfidf = vectorizer.transform([prompt_text])
 
     reco_idx = nlp_model.kneighbors(prompt_tfidf, return_distance=False)[0]
 
-    reco = df.set_index('movieId').iloc[reco_idx].sort_index()
+    reco = df.set_index('MovieId').iloc[reco_idx].sort_index()
 
     return reco
