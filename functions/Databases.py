@@ -1,5 +1,5 @@
-import pandas as pd
-import numpy as np
+import pandas as pd 
+import numpy as np 
 from scipy.sparse import csr_matrix
 
 def load_data(path: str, chunk_size: int):
@@ -20,9 +20,7 @@ def load_data(path: str, chunk_size: int):
 
     return df
 
-
 def create_matrix(df):
-    
     """
     This function creates a sparse user-movie matrix from a dataframe
 
