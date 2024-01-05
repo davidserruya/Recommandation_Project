@@ -73,8 +73,11 @@ Cette fonction utilise le NLP pour analyser la description textuelle donnée par
 
 ## Les étapes pour accéder à l'application 
 
-1.
-2. 
+
+
+Pour une meilleure expérience, activez le mode dark via le bouton en haut à droite dans settings !
+
+
 
 
 ## 
