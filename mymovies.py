@@ -6,16 +6,16 @@ from functions import connect_db, get_my_movies,get_movieId,add_movie,remove_spe
 # Settings page
 col1, col2, col3 = st.columns(3)
 with col2:
-    option = st.selectbox('Ajouter un film', [''] + st.session_state.df_movies['Title'].tolist())
+    option = st.selectbox('Ajouter un film', [''] + st.session_state.df_movies_light['Title'].tolist())
 
 
 # Option Selectbox
-if option and get_movieId(st.session_state.df_movies,option) not in st.session_state.df_user['MovieId'].tolist():
-    st.session_state.df_user=add_movie(st.session_state.df_user,st.session_state['UserId'],get_movieId(st.session_state.df_movies,option))   
+if option and get_movieId(st.session_state.df_movies_light,option) not in st.session_state.df_user['MovieId'].tolist():
+    st.session_state.df_user=add_movie(st.session_state.df_user,st.session_state['UserId'],get_movieId(st.session_state.df_movies_light,option))   
 
 # Settings movies presentation
 cols = cycle(st.columns(6))
-df_user_movie= pd.merge(st.session_state.df_user,st.session_state.df_movies, on='MovieId', how='left')
+df_user_movie= pd.merge(st.session_state.df_user,st.session_state.df_movies_light, on='MovieId', how='left')
 
 # loop for showing all movies user
 for index in range(len(df_user_movie)):

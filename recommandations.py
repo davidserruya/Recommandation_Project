@@ -1,4 +1,4 @@
-from functions import init_resource,remove_special_characters,nlp_reco
+from functions import remove_special_characters,nlp_reco
 from itertools import cycle
 
 # Initialize chat history
@@ -11,7 +11,7 @@ with st.chat_message('assistant'):
 
 utilisateur_message = st.text_input("Votre message:")
 if st.button("GO"):
-    reco = nlp_reco(model,nn, utilisateur_message)
+    reco =nlp_reco(utilisateur_message,st.session_state.df_movies,5)
     st.session_state.messages.append({"role": "assistant", "content": reco})
     st.session_state.messages.append({"role": "user", "content": utilisateur_message})
     st.session_state.demande_user=utilisateur_message
