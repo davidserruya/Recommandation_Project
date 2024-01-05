@@ -38,14 +38,13 @@ Il est à noter qu'en amont la base de données a été nettoyé (gestion des va
 
 
 
-*Les "meilleurs films"* : affiche les films mieux notés de la base de données.
-*
+*Les "meilleurs films"* : Affiche les films mieux notés de la base de données (c'est-à-dire les films ayant des notes supérieures à 4.1).
+*Recommadation NLP* : La méthode utilisée est le traitement du language naturel avec TF-IDF (Term Frequency-Inverse Document Frequency) et Nearest Neighbors.
+Cette fonction utilise le NLP pour analyser la description textuelle donnée par l'utilisateur. Elle convertit cette description en vecteurs numériques à l'aide de la méthode TF-IDF, qui mesure l'importance d'un mot dans un document par rapport à une collection de documents. Ensuite, elle utilise l'algorithme des plus proches voisins (Nearest Neighbors) pour trouver les films dont les synopsis sont les plus similaires à la description de l'utilisateur.
+*Plus de genres* : Analyse basée sur le genre autrement dit le système suggère des films dans le genre que l'utilisateur semble préférence au regard de son historique.
+*Recommandations Collaboratives* : Méthode basée sur les notes des utilisateurs et les similarités entre eux.
 
 
-Recommandations Collaboratives : Utilise collab_reco pour recommander des films basés sur les notes des utilisateurs et les similarités entre eux.
-Recommandations TD-IDF : Utilise tdidf_recom pour recommander des films basés sur les synopsis et les préférences de l'utilisateur.
-Recommandations NLP : Si l'utilisateur a fait une demande spécifique ("demande_user" dans st.session_state), le système utilise nlp_reco pour recommander des films basés sur cette requête.
-Plus de Genres : Suggère des films dans le genre que l'utilisateur semble préférer (more_genres).
 
 
 ## Les étapes pour accéder à l'application 
