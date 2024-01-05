@@ -21,7 +21,9 @@ Une seconde limite qu'on pourrait appeler "homogénisation des recommandations" 
 
 4. *Recommandation par NLP :* L'utilisateur interagit avec une boite de dialogue contenant le message :
 
-Que voulez-vous voir aujourd'hui ? 👋".L'utilisateur entre par la suite un texte contenant ses envies de films à regarder afin d'obtenir des recommandations personnalisées. Cette étape implique l'extraction des mots-clés pertinents. Par exemple, si un utilisateur écrit "Je veux un film d'aventure", le système identifie un ou des éléments clés tels que "aventure". Néanmoins, cette méthodologie est confrontée à plusieurs limites pour interpréter correctement les préférences de l'utilisateur notamment pour les demandes complexes ou très spécifiques.
+Que voulez-vous voir aujourd'hui ? 👋"
+
+L'utilisateur entre par la suite un texte contenant ses envies de films à regarder afin d'obtenir des recommandations personnalisées. Cette étape implique l'extraction des mots-clés pertinents. Par exemple, si un utilisateur écrit "Je veux un film d'aventure", le système identifie un ou des éléments clés tels que "aventure". Néanmoins, cette méthodologie est confrontée à plusieurs limites pour interpréter correctement les préférences de l'utilisateur notamment pour les demandes complexes ou très spécifiques.
 
 ## Fonctionnalités détaillées
 
