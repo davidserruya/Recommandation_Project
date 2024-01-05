@@ -47,7 +47,7 @@ Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis appliqu
 
 ![Description de l'image](cosinus.png)
 
-<img src="cosinus.png" height="300">
+<img src="cosinus.png" height="800">
 
 
 - *Plus de genres* : Analyse basée sur le genre autrement dit le système suggère des films dans le genre que l'utilisateur semble préférence au regard de son historique.
