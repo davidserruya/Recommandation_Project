@@ -45,9 +45,14 @@ Cette fonction utilise le NLP pour analyser la description textuelle donnée par
 
 Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis applique la similarité cosinus pour trouver les films dont les synopsis sont le plus similaires à ceux qu'un utilisateur a déjà appréciés. On appelle "similarité du cosinus" une mesure mathématique qui détermine à quel point deux vecteurs sont similaires en calculant le cosinus de l'angle entre eux. Une valeur proche de 1 indique une grande similarité, tandis qu'une valeur proche de 0 indique peu ou pas de similarité.
 
+![cosinus](/cosinus/example.png)
+
+
 - *Plus de genres* : Analyse basée sur le genre autrement dit le système suggère des films dans le genre que l'utilisateur semble préférence au regard de son historique.
   
 - *Recommandations Collaboratives* : Méthode basée sur les notes des utilisateurs et les similarités entre eux avec SVD (Singular Value Decomposition). Elle utilise la décomposition en valeurs singulières (SVD) pour créer un système de recommandation basé sur le filtrage collaboratif. Elle prédit les notes qu'un utilisateur pourrait donner à des films qu'il n'a pas encore vus, basé sur les préférences d'utilisateurs aux goûts similaires.
+
+
 
 
 ## Les étapes pour accéder à l'application 
