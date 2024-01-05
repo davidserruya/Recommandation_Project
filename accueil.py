@@ -7,19 +7,7 @@ if len(st.session_state.df_user)==0:
 
     col1, col2, col3 = st.columns([2, 5, 2]) 
     with col2:
-        st.subheader("🎞️ N'attendez plus pour vivre l'expérience CinéExplore 🎞️")
-        st.markdown("#### Ajoutez vos films et découvrez de nouvelles recommandations!")
-
-        st.write("1. Cliquez sur l'onglet Mes Films.")
-        st.image('mesfilms.png',width=500)
-        st.write("2. Sélectionnez des films grâce au menu déroulant.")
-        st.image('menuderoulant.png',width=500)
-        st.write("3. Notez les films.",width=500)
-        st.image('note.png',width=500)
-        st.write("4. Cliquez sur le bouton 'Sauvergarder Films'.")
-        st.image('sauvegarder.png',width=500)
-        st.write("5. Revenez sur la page d'accueil pour plus de recommandations.")
-        st.image('accueil.png',width=500)
+        st.image('fichiers/images/accueil.png')
 
 else:
     st.markdown("### Les meilleurs films de la plateforme")

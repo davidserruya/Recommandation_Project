@@ -11,9 +11,11 @@ st.set_page_config(
 st.markdown(""" <style> .block-container {padding-top: 2.5rem; padding-bottom: 0rem;} </style> """, unsafe_allow_html=True)
 
 if "authentication_status" not in st.session_state or st.session_state["authentication_status"]!=True:
-    st.markdown('<h1 style="text-align: center;color:#ff0404;">BIENVENUE SUR CINEMATCH</h1><br>', unsafe_allow_html=True)
+    left_col, cent_col,last_col = st.columns(3)
+    with cent_col:
+          st.image('fichiers/images/auth.png',width=500)
+    
     col1, col2 = st.columns(2)
-
     with col1:
        with st.form("Connexion"):
           st.markdown('<h3 style="text-align: center;">CONNEXION</h3>', unsafe_allow_html=True)
@@ -47,12 +49,14 @@ else:
         deconnexion()
     
     if 'df_user' not in st.session_state and 'df_movies' not in st.session_state:
-       st.session_state.df_movies_light = pd.read_csv('csv/movies_light_final.csv')
-       st.session_state.df_movies = pd.read_csv('csv/movies_final.csv')
+       st.session_state.df_movies_light = pd.read_csv('fichiers/csv/movies_light_final.csv')
+       st.session_state.df_movies = pd.read_csv('fichiers/csv/movies_final.csv')
        st.session_state.df_user = get_my_movies(st.session_state['UserId'])
-       st.session_state.df_ratings = pd.read_csv('csv/ratings.csv')
+       st.session_state.df_ratings = pd.read_csv('fichiers/csv/ratings.csv')
 
-    st.markdown('<h1 style="text-align: center;color:#ff0404">CINEMATCH</h1><br>', unsafe_allow_html=True)
+    left_co, cent_co,last_co = st.columns(3)
+    with cent_co:
+          st.image('fichiers/images/title.png',width=500)
     menu = option_menu(None, ["Accueil", "Mes films", "Recommandations"], 
              icons=['house', "film", "search"],  orientation="horizontal",
              menu_icon="cast", default_index=0,styles={

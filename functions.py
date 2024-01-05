@@ -168,6 +168,12 @@ def update_movies(df_user):
 
 ############################################ RECOMMANDATIONS #####################################  
 
+def capitalize_first_letter(name):
+    if name:
+        return name[0].upper() + name[1:]
+    else:
+        return name
+
 def preprocess_sentence(sentence, num_keywords, pos=["NOUN", "ADJ"]):
 
     nlp = en_core_web_sm.load()
@@ -275,7 +281,7 @@ def love_movie(df):
 
 @st.cache_resource()
 def loaded_cosine():
-    with open('csv/cosine_similarity_matrix.pkl', 'rb') as file:
+    with open('fichiers/pickle/cosine_similarity_matrix.pkl', 'rb') as file:
        loaded_cosine = pickle.load(file) 
     return loaded_cosine 
 

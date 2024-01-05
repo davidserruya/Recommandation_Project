@@ -1,4 +1,4 @@
-from functions import remove_special_characters,nlp_reco
+from functions import remove_special_characters,nlp_reco,capitalize_first_letter
 from itertools import cycle
 import fr_core_news_md
 nlp = fr_core_news_md.load()
@@ -8,7 +8,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 with st.chat_message('assistant'):
-        st.markdown(f"Hey {st.session_state['Username']} 👋! Que voulez-vous voir aujourd'hui ?")
+        st.markdown(f"Hey {capitalize_first_letter(st.session_state['Username'])} 👋! Que voulez-vous voir aujourd'hui ?")
 
 
 utilisateur_message = st.text_input("Votre message:")
