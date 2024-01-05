@@ -220,6 +220,8 @@ def more_genres(df,df_movies):
     genres=get_all_genres(df)
     best_genre=count_word_max(genres)
     df_best_genre = df_movies[(df_movies['RatingMean'] >= 3.5) & (df_movies['Genres'].str.contains(best_genre))]
+    if len(df_best_genre)<8:
+        df_best_genre=df_movies[df_movies['Genres'].str.contains(best_genre)]
     return best_genre,df_best_genre.sample(n=8)
 
 def count_word_max(list):
@@ -237,7 +239,9 @@ def get_all_genres(df):
     for liste in cleaned_genres:
         for genre in liste:
             final_genres.append(genre)
-    return final_genres
+    genres_concatenes = ",".join(final_genres)
+    liste_unique = [genre.strip() for genre in genres_concatenes.split(",")]
+    return liste_unique
 
 def tdidf_recom():
     metrique=loaded_cosine()

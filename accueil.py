@@ -64,8 +64,9 @@ else:
 
     if "demande_user" in st.session_state:
         demande=extraire_mots_cles(st.session_state.demande_user,nlp)
-        df_nlp=nlp_reco(demande,st.session_state.df_movies,8)
         st.markdown(f"### Parce que vous avez recherché: films {demande}")
+        with st.spinner("Pas de panique le filtrage prend un peu de temps ..."):
+            df_nlp=nlp_reco(demande,st.session_state.df_movies,8)
         cols = cycle(st.columns(8))
         for index in range(len(df_nlp)):  
             # recuperate the movie
