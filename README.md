@@ -43,7 +43,7 @@ Il est à noter qu'en amont la base de données a été nettoyé (gestion des va
 - *Recommadation NLP* : La méthode utilisée est le traitement du language naturel avec TF-IDF (Term Frequency-Inverse Document Frequency) et Nearest Neighbors.
 Cette fonction utilise le NLP pour analyser la description textuelle donnée par l'utilisateur. Elle convertit cette description en vecteurs numériques à l'aide de la méthode TF-IDF, qui mesure l'importance d'un mot dans un document par rapport à une collection de documents. Ensuite, elle utilise l'algorithme des plus proches voisins (Nearest Neighbors) pour trouver les films dont les synopsis sont les plus similaires à la description de l'utilisateur.
 
-Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis applique la similarité cosinus pour trouver les films dont les synopsis sont le plus similaires à ceux qu'un utilisateur a déjà appréciés.
+Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis applique la similarité cosinus pour trouver les films dont les synopsis sont le plus similaires à ceux qu'un utilisateur a déjà appréciés. On appelle "similarité du cosinus" une mesure mathématique qui détermine à quel point deux vecteurs sont similaires en calculant le cosinus de l'angle entre eux. Une valeur proche de 1 indique une grande similarité, tandis qu'une valeur proche de 0 indique peu ou pas de similarité.
 
 - *Plus de genres* : Analyse basée sur le genre autrement dit le système suggère des films dans le genre que l'utilisateur semble préférence au regard de son historique.
   
