@@ -4,14 +4,14 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 
 st.set_page_config(
-        page_title="netflix",
+        page_title="CINEMATCH",
         page_icon="🎞️",
         layout="wide",
     )
 st.markdown(""" <style> .block-container {padding-top: 2.5rem; padding-bottom: 0rem;} </style> """, unsafe_allow_html=True)
 
 if "authentication_status" not in st.session_state or st.session_state["authentication_status"]!=True:
-    st.markdown('<h1 style="text-align: center;color:#ff0404;">BIENVENUE SUR NETFLIX</h1><br>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center;color:#ff0404;">BIENVENUE SUR CINEMATCH</h1><br>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
 
     with col1:
@@ -52,7 +52,7 @@ else:
        st.session_state.df_user = get_my_movies(st.session_state['UserId'])
        st.session_state.df_ratings = pd.read_csv('csv/ratings.csv')
 
-    st.markdown('<h1 style="text-align: center;color:#ff0404">NETFLIX</h1><br>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center;color:#ff0404">CINEMATCH</h1><br>', unsafe_allow_html=True)
     menu = option_menu(None, ["Accueil", "Mes films", "Recommandations"], 
              icons=['house', "film", "search"],  orientation="horizontal",
              menu_icon="cast", default_index=0,styles={

@@ -1,4 +1,4 @@
-from functions import best_movies,remove_special_characters,more_genres,tdidf_recom,nlp_reco,collab_reco,extraire_mots_cles,get_df_ratings
+from functions import best_movies,remove_special_characters,more_genres,tdidf_recom,nlp_reco,collab_reco,get_df_ratings,preprocess_sentence
 from itertools import cycle
 import fr_core_news_md
 nlp = fr_core_news_md.load()
@@ -10,18 +10,16 @@ if len(st.session_state.df_user)==0:
         st.subheader("🎞️ N'attendez plus pour vivre l'expérience CinéExplore 🎞️")
         st.markdown("#### Ajoutez vos films et découvrez de nouvelles recommandations!")
 
-        # Ajoutez une image ou une vidéo d'accueil
-        #st.image("path/to/your/image.jpg", caption="Cinéma", use_column_width=True)
-
-        # Instructions pour ajouter des films
-        st.write("### Comment ajouter des films:")
-        col4, col5, col6 = st.columns([2, 5, 1])
-        with col5: 
-            st.write("1. Cliquez sur l'onglet Mes Films.")
-            st.write("2. Sélectionnez des films grâce au menu déroulant.")
-            st.write("3. Notez les films.")
-            st.write("4. Cliquez sur le bouton 'Sauvergarder Films'.")
-            st.write("5. Revenez sur la page d'accueil pour plus de recommandations.")
+        st.write("1. Cliquez sur l'onglet Mes Films.")
+        st.image('mesfilms.png',width=500)
+        st.write("2. Sélectionnez des films grâce au menu déroulant.")
+        st.image('menuderoulant.png',width=500)
+        st.write("3. Notez les films.",width=500)
+        st.image('note.png',width=500)
+        st.write("4. Cliquez sur le bouton 'Sauvergarder Films'.")
+        st.image('sauvegarder.png',width=500)
+        st.write("5. Revenez sur la page d'accueil pour plus de recommandations.")
+        st.image('accueil.png',width=500)
 
 else:
     st.markdown("### Les meilleurs films de la plateforme")
@@ -63,10 +61,10 @@ else:
 
 
     if "demande_user" in st.session_state:
-        demande=extraire_mots_cles(st.session_state.demande_user,nlp)
+        demande=preprocess_sentence(st.session_state.demande_user,1, pos=["NOUN", "ADJ"])
         st.markdown(f"### Parce que vous avez recherché: films {demande}")
         with st.spinner("Pas de panique le filtrage prend un peu de temps ..."):
-            df_nlp=nlp_reco(demande,st.session_state.df_movies,8)
+            df_nlp=nlp_reco(demande, st.session_state.df_movies, 8,1)
         cols = cycle(st.columns(8))
         for index in range(len(df_nlp)):  
             # recuperate the movie

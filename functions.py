@@ -21,12 +21,14 @@ from sentence_transformers import SentenceTransformer, util
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
-
+from collections import Counter
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 nltk.download('stopwords')
 nltk.download('punkt')
+from deep_translator import GoogleTranslator
+import en_core_web_sm
 
 
 ############################################ INSCRIPTION/CONNEXION/INITIALISATION #####################################
@@ -165,16 +167,21 @@ def update_movies(df_user):
         return None   
 
 ############################################ RECOMMANDATIONS #####################################  
-def preprocess_text(text):
 
+def preprocess_sentence(sentence, num_keywords, pos=["NOUN", "ADJ"]):
+
+    nlp = en_core_web_sm.load()
     stop_words = set(stopwords.words('english'))
-    words = word_tokenize(text)
-    filtered_words = [word.lower() for word in words if word.isalnum() and word.lower() not in stop_words]
-    
-    return ' '.join(filtered_words)
 
+    corpus = nlp(sentence)
+    non_movies_corpus = nlp(" ".join([token.text for token in corpus if token.text.lower() not in ["movie", "movies"]]))
+    corpus_clean = nlp(" ".join([token.lemma_ for token in non_movies_corpus if token.text.lower() not in stop_words and token.is_punct == False]))
+    frequent_words = Counter([token.text for token in corpus_clean if token.pos_ in pos])
+    keywords = [words for words, _ in frequent_words.most_common(num_keywords)]
 
-def nlp_reco(prompt: str, df, n_recommendations: int):
+    return ' '.join(keywords)
+
+def nlp_reco(prompt: str, df, n_recommendations: int, nb_words: int):
     '''
     This function returns a dataframe with a selection of movies recommandations based on user's specific text input
 
@@ -187,24 +194,31 @@ def nlp_reco(prompt: str, df, n_recommendations: int):
     - reco : a dataframe containing the movie_id, the titles and the genres of the movies we recommand to the user
     
     '''
-    model = spacy.load("xx_ent_wiki_sm")
- 
-    vectorizer = TfidfVectorizer(stop_words="english")
+    try: 
+        vectorizer = TfidfVectorizer(stop_words="english")
 
-    synopsis_tfidf = vectorizer.fit_transform(df['Synopsis'])
+        synopsis_tfidf = vectorizer.fit_transform(df['Synopsis'])
 
-    nn = NearestNeighbors(n_neighbors=n_recommendations)
-    nn.fit(synopsis_tfidf)
+        nn = NearestNeighbors(n_neighbors=n_recommendations)
+        nn.fit(synopsis_tfidf)
 
-    prompt_doc = model(prompt)
-    prompt_text = preprocess_text(prompt_doc.text)
-    prompt_tfidf = vectorizer.transform([prompt_text])
+        prompt_translate = GoogleTranslator(source='auto', target='en').translate(prompt)
 
-    reco_idx = nn.kneighbors(prompt_tfidf, return_distance=False)[0]
+        prompt_extract = preprocess_sentence(prompt_translate, nb_words, pos=["NOUN", "ADJ"])
 
-    reco = df[['MovieId', 'Title', 'Genres', 'Synopsis','Affiche']].set_index('MovieId').iloc[reco_idx].sort_index()
+        if  prompt_extract=='':
+            return 'Veuillez préciser votre demande ou la reformuler.'
 
-    return pd.DataFrame(reco)
+        prompt_tfidf = vectorizer.transform([prompt_extract])
+
+        reco_idx = nn.kneighbors(prompt_tfidf, return_distance=False)[0]
+
+        reco = df[['MovieId', 'Title', 'Genres', 'Synopsis','Affiche']].set_index('MovieId').iloc[reco_idx]
+
+        return pd.DataFrame(reco)
+    
+    except Exception as e:
+        return 'Veuillez préciser votre demande ou la reformuler.'
 
 ############################################ PAGE ACCUEIL #####################################
 
@@ -381,26 +395,3 @@ def collab_reco(df, user_id: int, n_recommandations: int, n_factors:50):
     recommandations=st.session_state.df_movies_light[st.session_state.df_movies_light['MovieId'].isin(recommandations)]
 
     return recommandations
-
-
-def supprimer_mot_film(phrase, nlp):
-    doc = nlp(phrase)
-    phrase_sans_film = " ".join([token.text for token in doc if token.text.lower() != "film"])
-    return phrase_sans_film
- 
-def nettoyer_phrase(phrase, nlp):
-    doc = nlp(phrase)
-    mots_nettoyes = [token.lemma_ for token in doc if token.text.lower() not in STOP_WORDS and token.is_punct == False]
-    return " ".join(mots_nettoyes)
- 
-def extraire_mots_cles(phrase, nlp, nombre_mots_cles=1, pos=["NOUN", "ADJ"]):
-    phrase_modifiee = nettoyer_phrase(supprimer_mot_film(phrase, nlp), nlp)
-    doc = nlp(phrase_modifiee)
-    mots_cles = []
-    for token in doc:
-        if token.pos_ in pos and token.text not in mots_cles:
-            mots_cles.append(token.text)
-            if len(mots_cles) == nombre_mots_cles:
-                break
-    return mots_cles[0]
-
