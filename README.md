@@ -38,13 +38,16 @@ Il est à noter qu'en amont la base de données a été nettoyé (gestion des va
 
 
 
-*Les "meilleurs films"* : Affiche les films mieux notés de la base de données (c'est-à-dire les films ayant des notes supérieures à 4.1).
-*Recommadation NLP* : La méthode utilisée est le traitement du language naturel avec TF-IDF (Term Frequency-Inverse Document Frequency) et Nearest Neighbors.
+- *Les "meilleurs films"* : Affiche les films mieux notés de la base de données (c'est-à-dire les films ayant des notes supérieures à 4.1).
+  
+- *Recommadation NLP* : La méthode utilisée est le traitement du language naturel avec TF-IDF (Term Frequency-Inverse Document Frequency) et Nearest Neighbors.
 Cette fonction utilise le NLP pour analyser la description textuelle donnée par l'utilisateur. Elle convertit cette description en vecteurs numériques à l'aide de la méthode TF-IDF, qui mesure l'importance d'un mot dans un document par rapport à une collection de documents. Ensuite, elle utilise l'algorithme des plus proches voisins (Nearest Neighbors) pour trouver les films dont les synopsis sont les plus similaires à la description de l'utilisateur.
-*Plus de genres* : Analyse basée sur le genre autrement dit le système suggère des films dans le genre que l'utilisateur semble préférence au regard de son historique.
-*Recommandations Collaboratives* : Méthode basée sur les notes des utilisateurs et les similarités entre eux.
 
+Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis applique la similarité cosinus pour trouver les films dont les synopsis sont le plus similaires à ceux qu'un utilisateur a déjà appréciés.
 
+- *Plus de genres* : Analyse basée sur le genre autrement dit le système suggère des films dans le genre que l'utilisateur semble préférence au regard de son historique.
+  
+- *Recommandations Collaboratives* : Méthode basée sur les notes des utilisateurs et les similarités entre eux avec SVD (Singular Value Decomposition). Elle utilise la décomposition en valeurs singulières (SVD) pour créer un système de recommandation basé sur le filtrage collaboratif. Elle prédit les notes qu'un utilisateur pourrait donner à des films qu'il n'a pas encore vus, basé sur les préférences d'utilisateurs aux goûts similaires.
 
 
 ## Les étapes pour accéder à l'application 
