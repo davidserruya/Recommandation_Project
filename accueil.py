@@ -1,4 +1,4 @@
-from functions import best_movies,remove_special_characters,more_genres,tdidf_recom,nlp_reco,collab_reco,extraire_mots_cles,init_nlp_reco
+from functions import best_movies,remove_special_characters,more_genres,tdidf_recom,nlp_reco,collab_reco,extraire_mots_cles,get_df_ratings
 from itertools import cycle
 import fr_core_news_md
 nlp = fr_core_news_md.load()
@@ -38,13 +38,12 @@ else:
         col.markdown(img_markdown, unsafe_allow_html=True)
     
     st.markdown("### On pense que vous allez adorer ...")
-    if "df_collab" not in st.session_state:
-        with st.spinner("Pas de panique le filtrage prend un peu de temps ..."):
-         st.session_state.df_collab=collab_reco(st.session_state['UserId'],8)
+    with st.spinner("Pas de panique le filtrage prend un peu de temps ..."):
+        df_collab=collab_reco(get_df_ratings(),st.session_state['UserId'],8,50)
     cols = cycle(st.columns(8))
-    for index in range(len(st.session_state.df_collab)):
+    for index in range(len(df_collab)):
             # recuperate the movie
-            row = st.session_state.df_collab.iloc[index]
+            row = df_collab.iloc[index]
             col = next(cols)
             # Image
             img_markdown = f"<a href='https://www.imdb.com/search/title/?title={remove_special_characters(row['Title'])}'><img src='{row['Affiche']}' width={150}></a><figcaption>{row['Title']}</figcaption>"
@@ -65,8 +64,7 @@ else:
 
     if "demande_user" in st.session_state:
         demande=extraire_mots_cles(st.session_state.demande_user,nlp)
-        nn_accueil=init_nlp_reco()
-        df_nlp=nlp_reco(model,nn_accueil,demande)
+        df_nlp=nlp_reco(demande,st.session_state.df_movies,8)
         st.markdown(f"### Parce que vous avez recherché: films {demande}")
         cols = cycle(st.columns(8))
         for index in range(len(df_nlp)):  

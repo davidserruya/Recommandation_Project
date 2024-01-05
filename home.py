@@ -1,5 +1,5 @@
 import streamlit as st
-from functions import check_credentials, add_user, deconnexion,get_my_movies,init_resource
+from functions import check_credentials, add_user, deconnexion,get_my_movies
 from streamlit_option_menu import option_menu
 import pandas as pd
 
@@ -11,12 +11,12 @@ st.set_page_config(
 st.markdown(""" <style> .block-container {padding-top: 2.5rem; padding-bottom: 0rem;} </style> """, unsafe_allow_html=True)
 
 if "authentication_status" not in st.session_state or st.session_state["authentication_status"]!=True:
-    st.markdown('<h1 style="text-align: center;">BIENVENUE SUR NETFLIX</h1><br>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center;color:#ff0404;">BIENVENUE SUR NETFLIX</h1><br>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
 
     with col1:
        with st.form("Connexion"):
-          st.write("Connexion")
+          st.markdown('<h3 style="text-align: center;">CONNEXION</h3>', unsafe_allow_html=True)
           username = st.text_input('Username')
           password = st.text_input("Password",type="password")
           submitted = st.form_submit_button("Se connecter")
@@ -32,7 +32,7 @@ if "authentication_status" not in st.session_state or st.session_state["authenti
 
     with col2:
        with st.form("Inscription"):
-          st.write("Inscription")
+          st.markdown('<h3 style="text-align: center;">INSCRIPTION</h3>', unsafe_allow_html=True)
           username = st.text_input('Username')
           password = st.text_input("Password",type="password")
           submitted_inscription = st.form_submit_button("S'inscrire")
@@ -47,19 +47,18 @@ else:
         deconnexion()
     
     if 'df_user' not in st.session_state and 'df_movies' not in st.session_state:
+       st.session_state.df_movies_light = pd.read_csv('csv/movies_light_final.csv')
        st.session_state.df_movies = pd.read_csv('csv/movies_final.csv')
        st.session_state.df_user = get_my_movies(st.session_state['UserId'])
        st.session_state.df_ratings = pd.read_csv('csv/ratings.csv')
-    
-    nn,model = init_resource()
 
-    st.markdown('<h1 style="text-align: center;">NETFLIX</h1><br>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center;color:#ff0404">NETFLIX</h1><br>', unsafe_allow_html=True)
     menu = option_menu(None, ["Accueil", "Mes films", "Recommandations"], 
              icons=['house', "film", "search"],  orientation="horizontal",
              menu_icon="cast", default_index=0,styles={
              "container": {"font-family": "Arial"},
              "icon": {"font-size": "20px"},
-             "nav-link-selected": {"background-color": "#2596be"}
+             "nav-link-selected": {"background-color": "#ff0404"}
          })
 
     if menu=="Accueil":

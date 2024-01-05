@@ -3,9 +3,8 @@ from passlib.hash import pbkdf2_sha256
 from sqlalchemy import text
 import pandas as pd
 import string
-import tensorflow as tf
-import tensorflow_hub as hub
-import tensorflow_text
+import spacy
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 import pickle
 from collections import Counter
@@ -13,23 +12,24 @@ import random
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
 import numpy as np
-import spacy
 import fr_core_news_md
 nlp = fr_core_news_md.load()
 from spacy.lang.en.stop_words import STOP_WORDS
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
+from sentence_transformers import SentenceTransformer, util
+import spacy
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import NearestNeighbors
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+nltk.download('stopwords')
+nltk.download('punkt')
 
 
 ############################################ INSCRIPTION/CONNEXION/INITIALISATION #####################################
-
-@st.cache_resource()
-def init_resource():
-    model_url = 'https://www.kaggle.com/models/google/universal-sentence-encoder/frameworks/TensorFlow2/variations/multilingual/versions/2'
-    model = hub.load(model_url)
-    with open('csv/objet_nn.pkl', 'rb') as nn_file:
-        nn = pickle.load(nn_file)
-    return nn,model
 
 def connect_db():
     try:
@@ -167,12 +167,46 @@ def update_movies(df_user):
         return None   
 
 ############################################ RECOMMANDATIONS #####################################  
+def preprocess_text(text):
 
-def nlp_reco(model,nn,prompt):
-    prompt_embed = model([prompt])
-    reco_idx = nn.kneighbors(prompt_embed, return_distance=False)[0]
-    reco = st.session_state.df_movies.iloc[reco_idx].sort_index()
-    return reco
+    stop_words = set(stopwords.words('english'))
+    words = word_tokenize(text)
+    filtered_words = [word.lower() for word in words if word.isalnum() and word.lower() not in stop_words]
+    
+    return ' '.join(filtered_words)
+
+
+def nlp_reco(prompt: str, df, n_recommendations: int):
+    '''
+    This function returns a dataframe with a selection of movies recommandations based on user's specific text input
+
+    Args: 
+    - prompt : the user's text input describing the kind of movies he wants to see
+    - df : a Dataframe containing at least the columns movieId, title and synopsis
+    - n_recommandations : the number of movies we want to recommand to the user
+
+    Returns:
+    - reco : a dataframe containing the movie_id, the titles and the genres of the movies we recommand to the user
+    
+    '''
+    model = spacy.load("xx_ent_wiki_sm")
+ 
+    vectorizer = TfidfVectorizer(stop_words="english")
+
+    synopsis_tfidf = vectorizer.fit_transform(df['Synopsis'])
+
+    nn = NearestNeighbors(n_neighbors=n_recommendations)
+    nn.fit(synopsis_tfidf)
+
+    prompt_doc = model(prompt)
+    prompt_text = preprocess_text(prompt_doc.text)
+    prompt_tfidf = vectorizer.transform([prompt_text])
+
+    reco_idx = nn.kneighbors(prompt_tfidf, return_distance=False)[0]
+
+    reco = df[['MovieId', 'Title', 'Genres', 'Synopsis','Affiche']].set_index('MovieId').iloc[reco_idx].sort_index()
+
+    return pd.DataFrame(reco)
 
 ############################################ PAGE ACCUEIL #####################################
 
@@ -236,55 +270,57 @@ def get_df_ratings():
     try:
         result = conn.query("""SELECT * FROM "Ratings";""",ttl=0)
         result_df = pd.concat([st.session_state.df_ratings, result], ignore_index=True)
+
         return result_df
     except Exception as e:
         st.error(f"Error: {e}")
         return st.session_state.df_ratings
 
 def create_matrix(df):
-    
     """
     This function creates a sparse user-movie matrix from a dataframe
- 
+
     Args:
     - a Dataframe that contains at least the columns movieId, userId, and rating (db_preprocessing)
- 
+
     Returns:
     - matrix : a sparse user-movie matrix of size NxM with N the number of unique users and M the number of unique movies
     - map_user : a dictionary that maps user_ids to their respective indices
     - map_user_inv : a dictionary that maps indices to the user_id
     - map_movie : a dictionary that maps movie_ids to their respective indices
     - map_movie_inv : a dictionary that maps indices to the movie_id
- 
+
     Inspired by the following repo : https://github.com/topspinj/tmls-2020-recommender-workshop
     """
- 
+
     N = df['UserId'].nunique()
     M = df['MovieId'].nunique()
- 
+
     map_user = dict(zip(np.unique(df['UserId']), list(range(df['UserId'].nunique()))))
     map_movie = dict(zip(np.unique(df['MovieId']), list(range(df['MovieId'].nunique()))))
- 
+
     user_idx = [map_user[i] for i in df['UserId']]
     movie_idx = [map_movie[i] for i in df['MovieId']]
- 
+
     matrix = csr_matrix((df["Rating"], (user_idx, movie_idx)), shape=(N,M))
- 
+
     df_matrix = df.pivot(index='UserId', columns='MovieId', values='Rating').fillna(0)
- 
+
     return matrix, df_matrix, map_user, map_movie
 
-def svd(matrix,map_user, map_movie, n_factors: int):
+def svd(matrix, map_user: dict, map_movie: dict, n_factors: int):
     """
     This function returns a dataframe with the predicted ratings for all users within the dataframe
- 
+
     Args:
     - matrix : the sparse user-movie matrix created using the create_matrix function
     - n_factors : the number of factors / rank of the latent matrix for factorization
- 
+    - map_user : a dictionary that maps user_ids to their respective indices
+    - map_movie : a dictionary that maps movie_ids to their respective indices
+
     Returns:
     - predictions : a DataFrame containing the predicted ratings for all users in the original dataset
- 
+
     Inspired by the following Git repo : https://github.com/vivdalal/movie-recommender-system
         
     """
@@ -293,40 +329,56 @@ def svd(matrix,map_user, map_movie, n_factors: int):
     # sigma : the diagonal matrix of singular values
     # V_t : the transposed movie matrix of dimension (n_factors, n_movies)
     
-    U, sigma, V_t = svds(matrix, k = n_factors)
- 
-    sigma = np.diag(sigma)
- 
-    pred_ratings = np.dot((U @ sigma), V_t)
- 
-    predictions = pd.DataFrame(pred_ratings)
- 
-    predictions.rename(columns=dict(zip(predictions.columns, list(map_movie.keys()))), inplace=True)
-    predictions.index = list(map_user.keys())
+    try:
+
+        U, sigma, V_t = svds(matrix, k = n_factors)
+
+        sigma = np.diag(sigma)
+
+        pred_ratings = np.dot((U @ sigma), V_t)
+
+        predictions = pd.DataFrame(pred_ratings)
+
+        predictions.rename(columns=dict(zip(predictions.columns, list(map_movie.keys()))), inplace=True)
+        predictions.index = list(map_user.keys())
+    
+    except ValueError:
+        print('The number of factor ({0}) is either smaller than 1 or larger than one dimension of \
+              the matrix shape ({1})'.format(n_factors, matrix.shape))
     
     return predictions
 
-def collab_reco(user_id: int, n_recommandations: int):
-    '''
-    This function automates the collaborative filtering recommandations
-    '''
-    df= get_df_ratings()
- 
+def collab_reco(df, user_id: int, n_recommandations: int, n_factors:50):
+    """
+    This function returns a DataFrame with movies recommandations based on user's previously rated movies
+
+    Args:
+    - df : a Dataframe that contains at least the columns movieId, userId, and rating
+    - user_id : the user id of the user we want to make recommandations to
+    - n_recommandations : the number of movies we want to recommand to the user
+    - n_factors : the number of factors / rank of the latent matrix for factorization (default is 50)
+
+    Returns:
+    - recommandations : a list containing the movie_id of the movies we recommand to the user
+
+    Inspired by the following Git repo : https://github.com/vivdalal/movie-recommender-system
+    """
+
     matrix, df_matrix, map_user, map_movie = create_matrix(df)
- 
-    df_pred=svd(matrix, map_user, map_movie, 50).loc[user_id].sort_values(ascending=False)
- 
+
+    df_pred = svd(matrix, map_user, map_movie, n_factors).loc[user_id].sort_values(ascending=False)
+
     user_data = df_matrix.loc[user_id]
- 
+
     seen_movies = list(user_data[user_data != 0.0].index)
     
     reco_movies = df_pred[~df_pred.index.isin(seen_movies)][:n_recommandations].index
- 
-    recommandations = list(df[['MovieId']].drop_duplicates(subset=['MovieId']).set_index('MovieId').iloc[reco_movies].index)
 
-    df_recommandation = st.session_state.df_movies[st.session_state.df_movies['MovieId'].isin(recommandations)]
+    recommandations = list(df[['MovieId']].drop_duplicates(subset=['MovieId']).set_index('MovieId').loc[reco_movies].index)
     
-    return df_recommandation
+    recommandations=st.session_state.df_movies_light[st.session_state.df_movies_light['MovieId'].isin(recommandations)]
+
+    return recommandations
 
 
 def supprimer_mot_film(phrase, nlp):
@@ -350,8 +402,3 @@ def extraire_mots_cles(phrase, nlp, nombre_mots_cles=1, pos=["NOUN", "ADJ"]):
                 break
     return mots_cles[0]
 
-@st.cache_resource()
-def init_nlp_reco():
-    with open('csv/objet_nn_2.pkl', 'rb') as nn_file:
-        nn = pickle.load(nn_file)
-    return nn
