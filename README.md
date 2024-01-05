@@ -19,7 +19,9 @@ Ce projet Python a été créé dans le but de fournir à des utilisateurs des r
 Une seconde limite qu'on pourrait appeler "homogénisation des recommandations" est l'idée selon laquelle l'algorithme tend à recommander des films populaires et biens notés, conduisant à une certaine uniformité des recommandations et ainsi une sous-représentation des films de niche. Enfin, les évaluations de films peuvent connaître des inexactitudes dues au manque d'implication des utilisateurs au moment de la notation, ce qui introduit des biais et réduit la pertinence des recommandations générées par le système.
 
 
-4. *Recommandation par NLP :* L'utilisateur interagit avec une boite de dialogue contenant le message 👋! Que voulez-vous voir aujourd'hui ?".L'utilisateur entre par la suite un texte contenant ses envies de films à regarder afin d'obtenir des recommandations personnalisées. Cette étape implique l'extraction des mots-clés pertinents. Par exemple, si un utilisateur écrit "Je veux un film d'aventure", le système identifie un ou des éléments clés tels que "aventure". Néanmoins, cette méthodologie est confrontée à plusieurs limites pour interpréter correctement les préférences de l'utilisateur notamment pour les demandes complexes ou très spécifiques.
+4. *Recommandation par NLP :* L'utilisateur interagit avec une boite de dialogue contenant le message :
+
+Que voulez-vous voir aujourd'hui ? 👋".L'utilisateur entre par la suite un texte contenant ses envies de films à regarder afin d'obtenir des recommandations personnalisées. Cette étape implique l'extraction des mots-clés pertinents. Par exemple, si un utilisateur écrit "Je veux un film d'aventure", le système identifie un ou des éléments clés tels que "aventure". Néanmoins, cette méthodologie est confrontée à plusieurs limites pour interpréter correctement les préférences de l'utilisateur notamment pour les demandes complexes ou très spécifiques.
 
 ## Fonctionnalités détaillées
 
