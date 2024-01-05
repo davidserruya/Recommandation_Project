@@ -6,7 +6,7 @@
 Membres du groupe : 
 - Jérémy DREUMONT , Ahmed OUASSOU , Cindy PORFIRIO, Ilias RAZIG, David SERRUYA
 
-<span style="color: blue;"> ## Objectif : <span style="color: blue;">
+<h2 style="color: blue;"> ## Objectif </h2>
  
 Ce projet Python a été créé dans le but de fournir à des utilisateurs des recommandations personnalisées de films à regarder sur la base de plusieurs méthodes de recommandation : le filtrage collaboratif et l'utilisation de NLP sur les synopsis des films. Ce dernier se traduit par une application web où vous trouverez le lien vers la démo youtube ici : 
 
