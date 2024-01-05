@@ -11,7 +11,7 @@ Membres du groupe :
 Ce projet Python a été créé dans le but de fournir à des utilisateurs des recommandations personnalisées de films à regarder sur la base de plusieurs méthodes de recommandation : le filtrage collaboratif et l'utilisation de NLP sur les synopsis des films. Ce dernier se traduit par une application web où vous trouverez le lien vers la démo youtube ici : 
 
 
-## Fonctionnalités 
+## Fonctionnalités générales
  
 1. **Recommandation par filtrage collaboratif :** Après la connexion de l'utilisateur, l'utilisateur renseigne les films qu'il a regardé parmi la liste des films ainsi que leurs notes correspondantes. Par la suite un algorithme de filtrage collaboratif basé sur la décomposition de matrice propose des recommandations de films basé sur les notes entrées. Cette approche identifie les utilisateurs similaires en fonction de leurs historiques de notation pour faire des recommandations.
    
@@ -20,6 +20,32 @@ Une seconde limite qu'on pourrait appeler "homogénisation des recommandations" 
 
 
 4. **Recommandation par NLP :** L'utilisateur interagit avec une boite de dialogue contenant le message 👋! Que voulez-vous voir aujourd'hui ?" . L'utilisateur entre par la suite un texte contenant ses envies de films à regarder afin d'obtenir des recommandations basées sur le texte entré. Cette étape implique l'extraction des mots-clés pertinents et la détermination des préférences sous-jacentes de l'utilisateur. Par exemple, si un utilisateur écrit "Je veux un film d'aventure", le système identifie un ou des éléments clés tels que "aventure".Néanmoins, cette méthodologie est confronté à des limites lors de l'analyse sémantique. Le système ne peut pas toujours interpréter correctement les préférences de l'utilisateur notamment pour des demandes complexes ou très spécifiques.
+
+## Fonctionnalités détaillées
+
+
+### Connexion et Gestion des Utilisateurs
+
+L'utilisateur établit un première connexion à une base de données PostgresSQL. Cette étape gère l'état de la session d'authentification et ajoute un nouvel utilisateur à la base de données après avoir vérifié que le nom d'utilisateur n'est pas déjà pris.
+
+### Gestion des films
+
+Dans un premier temps, l'utilisateur doit noter les films afin que le système puisse recommander des nouveaux films. Suite à cette étape la base de données est mise à jour avec les nouveaux films ou notes ajoutés par un utilisateur.
+
+### Recommandations de films
+
+Il est à noter qu'en amont la base de données a été nettoyé (gestion des valeurs aberrantes) mais aussi le texte a été pré-traité en ne conservant que les mots alphanumériques. Autrement dit, les signes de ponctuation et les mots peu informatifs (comme "le", "et", "dans", etc.) sont éliminés réduisant le bruit dans les donnée.
+
+
+
+*Les "meilleurs films"* : affiche les films mieux notés de la base de données.
+*
+
+
+Recommandations Collaboratives : Utilise collab_reco pour recommander des films basés sur les notes des utilisateurs et les similarités entre eux.
+Recommandations TD-IDF : Utilise tdidf_recom pour recommander des films basés sur les synopsis et les préférences de l'utilisateur.
+Recommandations NLP : Si l'utilisateur a fait une demande spécifique ("demande_user" dans st.session_state), le système utilise nlp_reco pour recommander des films basés sur cette requête.
+Plus de Genres : Suggère des films dans le genre que l'utilisateur semble préférer (more_genres).
 
 
 ## Les étapes pour accéder à l'application 
