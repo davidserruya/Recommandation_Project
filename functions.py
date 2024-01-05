@@ -81,13 +81,11 @@ def add_user(username, password):
                 try:
                     session.execute(text("""INSERT INTO "Users" ("Username", "Password") VALUES (:username, :password);"""),{"username": username, "password": pbkdf2_sha256.hash(password)})
                     session.commit()
-                    session.reset()
                     st.balloons()
                     return True
                 except Exception as e:
                     st.error(f"Error adding user: {e}")
                     session.rollback()
-                    session.reset()
                     return False
     except Exception as e:
         st.error(f"Error checking existing user: {e}")
