@@ -45,7 +45,7 @@ Cette fonction utilise le NLP pour analyser la description textuelle donnée par
 
 Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis applique la similarité cosinus pour trouver les films dont les synopsis sont le plus similaires à ceux qu'un utilisateur a déjà appréciés. On appelle "similarité du cosinus" une mesure mathématique qui détermine à quel point deux vecteurs sont similaires en calculant le cosinus de l'angle entre eux. Une valeur proche de 1 indique une grande similarité, tandis qu'une valeur proche de 0 indique peu ou pas de similarité.
 
-![Description de l'image](cosinus.png)
+
 
 <img src="cosinus.png" height="800">
 
