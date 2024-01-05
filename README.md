@@ -8,7 +8,7 @@ Membres du groupe :
 
 ## Objectif
 
-Ce projet Python a été créé dans le but de fournir à des utilisateurs des recommandations personnalisées de films à regarder sur la base de plusieurs méthodes de recommandation : le filtrage collaboratif et l'utilisation de NLP sur les synopsis des films. Ce dernier se traduit par une application web où vous trouverez le lien vers la démo youtube ici : 
+Ce projet Python a été créé dans le but de fournir à des utilisateurs des recommandations personnalisées de films à regarder sur la base de plusieurs méthodes de recommandation : le filtrage collaboratif et l'utilisation de NLP sur les synopsis des films. Ce dernier se traduit par une application web où vous trouverez le lien vers la démo youtube ici : https://youtu.be/lYTnrR0yYwE
 
 
 ## Fonctionnalités générales
@@ -34,20 +34,26 @@ L'utilisateur établit une première connexion à une base de données PostgresS
 
 ### Gestion des films
 
-Dans un premier temps, l'utilisateur doit noter les films afin que le système puisse recommander des nouveaux films. Suite à cette dernière, la base de données est mise à jour avec les nouveaux films ou notes ajoutés par un utilisateur.
+Dans un premier temps, l'utilisateur doit noter les films dans l'onglet "Mes Films" afin que le système puisse recommander des nouveaux films. L'utilisateur est invité à rechercher les films manuellement les films qu'il a déjà vu. Suite à ça, la base de données sera mise à jour avec les nouveaux films ou notes ajoutés par un utilisateur.
 
 ### Recommandations de films
 
 Il est à noter qu'en amont la base de données a été nettoyé (gestion des valeurs aberrantes etc.) mais aussi le texte a été pré-traité en ne conservant que les mots alphanumériques. Autrement dit, les signes de ponctuation et les mots peu informatifs (comme "le", "et", "dans", etc.) sont éliminés réduisant le bruit dans les donnée.
 
+Dans l'onglet "Recommandation", l'utilisateur exprimera ce qu'il souhaitera regarder par exemple : "Je veux voir un film de basketball".
 
-- *Les "meilleurs films"* : Affiche les films mieux notés de la base de données (c'est-à-dire les films ayant des notes supérieures à 4.1).
+Puis dans l'onglet accueil, le site affichera : 
+
+- *Les "meilleurs films de la plateforme"* : Affiche les films mieux notés de la base de données (c'est-à-dire les films ayant des notes supérieures à 4.1).
   
-- *Recommadation NLP* : La méthode utilisée est le traitement du language naturel avec TF-IDF (Term Frequency-Inverse Document Frequency) et Nearest Neighbors.
+- *"On pense que vous allez adorer"* : La méthode utilisée est le traitement du language naturel avec TF-IDF (Term Frequency-Inverse Document Frequency) et Nearest Neighbors.
 Cette fonction utilise le NLP pour analyser la description textuelle donnée par l'utilisateur. Elle convertit cette description en vecteurs numériques à l'aide de la méthode TF-IDF, qui mesure l'importance d'un mot dans un document. Ensuite, elle utilise l'algorithme des plus proches voisins (Nearest Neighbors) pour trouver les films dont les synopsis sont les plus similaires à la description de l'utilisateur.
 
 
-Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis applique la similarité cosinus pour trouver les films dont les synopsis sont le plus similaires à ceux qu'un utilisateur a déjà appréciés. On appelle "similarité du cosinus" une mesure mathématique qui détermine à quel point deux vecteurs sont similaires en calculant le cosinus de l'angle entre eux. Une valeur proche de 1 indique une grande similarité, tandis qu'une valeur proche de 0 indique peu ou pas de similarité.
+- *"Parce que vous avez regardé et aimé Toy Story"* : Méthode basée sur les notes des utilisateurs et les similarités entre eux avec SVD (Singular Value Decomposition). Elle utilise la décomposition en valeurs singulières (SVD) pour créer un système de recommandation basé sur le filtrage collaboratif. Elle prédit les notes qu'un utilisateur pourrait donner à des films qu'il n'a pas encore vus, basé sur les préférences d'utilisateurs aux goûts similaires.
+
+
+- *"Parce que vous avez recherché :"* Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis applique la similarité cosinus pour trouver les films dont les synopsis sont le plus similaires à ceux qu'un   utilisateur a déjà appréciés. On appelle "similarité du cosinus" une mesure mathématique qui détermine à quel point deux vecteurs sont similaires en calculant le cosinus de l'angle entre eux. Une valeur proche de 1 indique une grande similarité, tandis qu'une valeur proche de 0 indique peu ou pas de similarité.
 
 
 
@@ -60,10 +66,8 @@ Utilise TF-IDF pour convertir les synopsis des films en vecteurs et puis appliqu
 
 
 
-- *Plus de genres* : Analyse basée sur le genre autrement dit le système suggère des films dans le genre que l'utilisateur semble préférence au regard de son historique.
+- *"Plus de ce genre"* : Analyse basée sur le genre autrement dit le système suggère des films dans le genre que l'utilisateur semble préférence au regard de son historique.
   
-- *Recommandations Collaboratives* : Méthode basée sur les notes des utilisateurs et les similarités entre eux avec SVD (Singular Value Decomposition). Elle utilise la décomposition en valeurs singulières (SVD) pour créer un système de recommandation basé sur le filtrage collaboratif. Elle prédit les notes qu'un utilisateur pourrait donner à des films qu'il n'a pas encore vus, basé sur les préférences d'utilisateurs aux goûts similaires.
-
 
 
 
