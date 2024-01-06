@@ -78,6 +78,11 @@ La commande ```git clone``` peut prendre un peu de temps vu le fichier pickle vo
 
 Pour une meilleure expérience, activez le mode dark via le bouton en haut à droite dans settings !
 
+
+Le script ```automatisation.sh``` permet la creation les environnements et les conteneurs;il vérifie d'abord le nombre d'arguments passés au script. Si l'utilisateur ne fournit pas exactement deux arguments lors de l'exécution du script, il affiche un message d'utilisation indiquant comment utiliser le script. Les deux arguments attendus sont le nom d'utilisateur PostgreSQL ($1) et le mot de passe PostgreSQL ($2).
+Après il procedera à la creation des environnements et des conteneurs. pour lancer le script 
+```./automatisation.sh POSTGRES_USER POSTGRES_PASSWORD```
+
 L'application se deploie via Docker compose ```docker-compose up -d```, pour que le fichier Docker compose s'éxecute correctement, il faut creer un volume Data: ```docker volume create Data``` et ce volume va contenir le fichier db_sql.csv.
 L'utilisateur et le mot de passe de PostgreSQL dans le docker compose sont renseignés dans un fichier caché .env dans le repertoire racine.
 
