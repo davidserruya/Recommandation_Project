@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ "$#" -ne 2 ]; then
-    echo "Utilisation : $0 <nom_utilisateur_postgres> <mot_de_passe_postgres>"
+if [ "$#" -ne 1 ]; then
+    echo "Utilisation : $0 <mot_de_passe_postgres>"
     exit 1
 fi
 
-POSTGRES_USER="$1"
-POSTGRES_PASSWORD="$2"
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="$1"
 ENV_FILE="$HOME/Recommandation_Project/.env"
 
 docker volume create Data
@@ -24,5 +24,6 @@ sed -i "s/password = \"xxx\"/password = \"$POSTGRES_PASSWORD\"/g" "$HOME/Recomma
 cd ~/Recommandation_Project/
 docker-compose up -d
 
-docker exec -it recommandation_project_postgres_1 psql -U "$POSTGRES_USER" -d recommandations -a -f /docker-entrypoint-initdb.d/init-script.sql > /dev/null 2>&1
+docker cp ./postgresql/init-script.sql recommandation_project_postgres_1:/tmp/ 
+docker exec -it recommandation_project_postgres_1 psql -U postgres -d recommandations -a -f /tmp/init-script.sql
 
