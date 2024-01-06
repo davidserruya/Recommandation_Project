@@ -17,7 +17,6 @@ nlp = fr_core_news_md.load()
 from spacy.lang.en.stop_words import STOP_WORDS
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
-from sentence_transformers import SentenceTransformer, util
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
