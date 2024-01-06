@@ -23,6 +23,7 @@ sed -i "s/password = \"xxx\"/password = \"$POSTGRES_PASSWORD\"/g" "$HOME/Recomma
 
 cd ~/Recommandation_Project/
 docker-compose up -d
+sleep 30
 
 docker cp ./postgresql/init-script.sql recommandation_project_postgres_1:/tmp/ 
 docker exec -it recommandation_project_postgres_1 psql -U postgres -a -f /tmp/init-script.sql
