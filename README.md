@@ -97,11 +97,6 @@ database = "recommandations"
 username = "xxx"
 password = "xxx"
 ```
-**Procédure pour l'ajout du Pickle**
-
-Il faut tout d'abord créer un dossier vide pickle sous le chemin suivant (si pas déjà fait) : ```main/application/fichiers/```
-
-Enfin, il faut télécharger le pickle depuis le lien suivant https://drive.google.com/drive/folders/1Pl-BPfC6io6fYhRdsiV3p1g4GgiyQURQ?usp=sharing et l'ajouter au chemin mentionné ci-dessus.
 
 ## Références
 
