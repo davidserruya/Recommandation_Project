@@ -80,8 +80,23 @@ Pour une meilleure expérience, activez le mode dark via le bouton en haut à dr
 L'application se deploie via Docker compose ```docker-compose up -d```, pour que le fichier Docker compose s'éxecute correctement, il faut creer un volume Data: ```docker volume create Data``` et ce volume va contenir le fichier db_sql.csv.
 L'utilisateur et le mot de passe de PostgreSQL dans le docker compose sont renseignés dans un fichier caché .env dans le repertoire racine.
 
-## 
+## Remarques
+Il y a deux fichiers cachés : ```.env``` qui se trouve dans la racine du projet et qui contient l'utilisateur et le mot de passe PostgresSQL.
+```
+POSTGRES_USER=xxx
+POSTGRES_PASSWORD=xxx
+```
 
+Il y a aussi un repertoire caché ```.streamlit``` qui contient un fichier ```secrets.toml``` qui permet d'établir la connexion entre streamlit et la base de données PostgreSQL. Ce fichier secret doit avoir le même user et password que le ```.env```.
+```
+[connections.postgresql]
+dialect = "postgresql"
+host = "POSTGRES_CONTAINER_NAME"
+port = "5432"
+database = "recommandations"
+username = "xxx"
+password = "xxx"
+```
 ## Références
 
 - GroupLens (2019).MovieLens 25M Dataset : https://grouplens.org/datasets/movielens/25m/ & https://www.kaggle.com/datasets/garymk/movielens-25m-dataset
