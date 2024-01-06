@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  recommandations:
+    build:
+      context: ./application
+    ports:
+      - "8501:8501"
+
+  postgres:
+    build:
+      context: ./postgresql
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: recommandations
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - Data:/root/
+    depends_on:
+      - recommandations
+
+volumes:
+  postgres_data:
+  Data:
+    external: true
+
