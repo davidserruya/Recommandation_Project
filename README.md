@@ -4,7 +4,7 @@
 ## ENSAE Paris - MS Data Science
  
 Membres du groupe : 
-- Jérémy DREUMONT , Ahmed OUASSOU , Cindy PORFIRIO, Ilias RAZIG, David SERRUYA
+- Jérémy DREUMONT, Ahmed OUASSOU, Cindy PORFIRIO, Ilias RAZIG, David SERRUYA
 
 ## Objectif
 
