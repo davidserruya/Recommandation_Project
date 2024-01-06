@@ -9,5 +9,5 @@ SQLAlchemy==2.0.25
 streamlit==1.29.0
 streamlit-authenticator==0.2.3
 streamlit-option-menu==0.3.6
-google-translator
+deep-translator
 
