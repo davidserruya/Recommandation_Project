@@ -47,20 +47,6 @@ else:
         img_markdown = f"<a href='https://www.imdb.com/search/title/?title={remove_special_characters(row['Title'])}'><img src='{row['Affiche']}' width={150}></a><figcaption>{row['Title']}</figcaption>"
         col.markdown(img_markdown, unsafe_allow_html=True)
 
-
-    if "demande_user" in st.session_state:
-        demande=preprocess_sentence(st.session_state.demande_user,1, pos=["NOUN", "ADJ"])
-        st.markdown(f"### Parce que vous avez recherché: films {demande}")
-        with st.spinner("Pas de panique le filtrage prend un peu de temps ..."):
-            df_nlp=nlp_reco(demande, st.session_state.df_movies, 8,1)
-        cols = cycle(st.columns(8))
-        for index in range(len(df_nlp)):  
-            # recuperate the movie
-            row = df_nlp.iloc[index]
-            col = next(cols)
-            # Image
-            img_markdown = f"<a href='https://www.imdb.com/search/title/?title={remove_special_characters(row['Title'])}'><img src='{row['Affiche']}' width={150}></a><figcaption>{row['Title']}</figcaption>"
-            col.markdown(img_markdown, unsafe_allow_html=True)
         
 
 
