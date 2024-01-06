@@ -101,3 +101,5 @@ password = "xxx"
 
 - GroupLens (2019).MovieLens 25M Dataset : https://grouplens.org/datasets/movielens/25m/ & https://www.kaggle.com/datasets/garymk/movielens-25m-dataset
 - Tyrrell4innovation.(2010). MiWORD of the Day Is…Cosine Distance! : https://www.tyrrell4innovation.ca/miword-of-the-day-iscosine-distance/
+- tmls-2020-recommender-workshop : https://github.com/topspinj/tmls-2020-recommender-workshop
+- movie-recommender-system : https://github.com/vivdalal/movie-recommender-system
