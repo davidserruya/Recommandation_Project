@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS recommandations;
+CREATE DATABASE recommandations;
 
 \c recommandations
 
-CREATE SEQUENCE IF NOT EXISTS user_id_sequence START WITH 162542;
+CREATE SEQUENCE user_id_sequence START WITH 162542;
 
 CREATE TABLE IF NOT EXISTS "Users" (
     "UserId" SERIAL PRIMARY KEY,
@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS "Users" (
     "Password" VARCHAR(256) NOT NULL
 );
 
-ALTER TABLE IF EXISTS "Users" ALTER COLUMN "UserId" SET DEFAULT nextval('user_id_sequence');
+ALTER "Users" ALTER COLUMN "UserId" SET DEFAULT nextval('user_id_sequence');
 
-CREATE TABLE IF NOT EXISTS "Movies" (
+CREATE TABLE "Movies" (
     "MovieId" SERIAL PRIMARY KEY,
     "Title" VARCHAR(255),
     "Genres" VARCHAR(255),
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS "Movies" (
     "Affiche" TEXT
 );
 
-CREATE TABLE IF NOT EXISTS "Ratings" (
+CREATE TABLE "Ratings" (
     "UserId" INTEGER,
     "MovieId" INTEGER,
     "Rating" NUMERIC(2, 1),
@@ -32,4 +32,4 @@ CREATE TABLE IF NOT EXISTS "Ratings" (
 
 \c recommandations
 
-COPY "Movies" FROM '/tmp/db_sql.csv' DELIMITER ',' CSV HEADER;
+COPY "Movies" FROM '/root/db_sql.csv' DELIMITER ',' CSV HEADER;
