@@ -71,7 +71,7 @@ Cette fonction utilise le NLP pour analyser la description textuelle donnée par
 
 
 
-## Les étapes pour accéder à l'application 
+## Les étapes pour accéder à l'application sous Linux
 
 
 La commande ```git clone``` peut prendre un peu de temps vu le fichier pickle volumineux.
