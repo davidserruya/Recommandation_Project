@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "Users" (
     "Password" VARCHAR(256) NOT NULL
 );
 
-ALTER "Users" ALTER COLUMN "UserId" SET DEFAULT nextval('user_id_sequence');
+ALTER TABLE "Users" ALTER COLUMN "UserId" SET DEFAULT nextval('user_id_sequence');
 
 CREATE TABLE "Movies" (
     "MovieId" SERIAL PRIMARY KEY,
