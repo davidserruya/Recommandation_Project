@@ -77,8 +77,8 @@ Cette fonction utilise le NLP pour analyser la description textuelle donnée par
 
 Pour une meilleure expérience, activez le mode dark via le bouton en haut à droite dans settings !
 
-
-
+L'application se deploie via Docker compose ```docker-compose up -d```, pour que le fichier Docker compose s'éxecute correctement, il faut creer un volume Data: ```docker volume create Data``` et ce volume va contenir le fichier db_sql.csv.
+L'utilisateur et le mot de passe de PostgreSQL dans le docker compose sont renseignés dans un fichier caché .env dans le repertoire racine.
 
 ## 
 
