@@ -25,5 +25,5 @@ cd ~/Recommandation_Project/
 docker-compose up -d
 
 docker cp ./postgresql/init-script.sql recommandation_project_postgres_1:/tmp/ 
-docker exec -it recommandation_project_postgres_1 psql -U postgres -d recommandations -a -f /tmp/init-script.sql
+docker exec -it recommandation_project_postgres_1 psql -U postgres -a -f /tmp/init-script.sql
 
