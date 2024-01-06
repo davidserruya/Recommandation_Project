@@ -6,9 +6,6 @@
 Membres du groupe : 
 - Jérémy DREUMONT, Ahmed OUASSOU, Cindy PORFIRIO, Ilias RAZIG, David SERRUYA
 
-## Lien vers le drive du Pickle
-https://drive.google.com/drive/folders/1Pl-BPfC6io6fYhRdsiV3p1g4GgiyQURQ?usp=sharing
-
 ## Objectif
 
 Ce projet Python a été créé dans le but de fournir à des utilisateurs des recommandations personnalisées de films à regarder sur la base de plusieurs méthodes de recommandation : le filtrage collaboratif et l'utilisation de NLP sur les synopsis des films. Ce dernier se traduit par une application web où vous trouverez le lien vers la démo youtube ici : https://youtu.be/lYTnrR0yYwE
@@ -100,6 +97,10 @@ database = "recommandations"
 username = "xxx"
 password = "xxx"
 ```
+**Procédure pour l'ajout du Pickle**
+Il faut tout d'abord créer un dossier vide pickle sous le chemin suivant (si pas déjà fait) : main/application/fichiers/
+Enfin, il faut télécharger le pickle depuis le lien suivant https://drive.google.com/drive/folders/1Pl-BPfC6io6fYhRdsiV3p1g4GgiyQURQ?usp=sharing et l'ajouter au chemin mentionné ci-dessus.
+
 ## Références
 
 - GroupLens (2019).MovieLens 25M Dataset : https://grouplens.org/datasets/movielens/25m/ & https://www.kaggle.com/datasets/garymk/movielens-25m-dataset
